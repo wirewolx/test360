@@ -17,7 +17,7 @@ concurrency:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 15
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
@@ -29,18 +29,13 @@ jobs:
           node-version: '20'
           cache: npm
 
-      - uses: actions/cache@v4
-        id: node-modules
-        with:
-          path: node_modules
-          key: ${{ runner.os }}-node-modules-${{ hashFiles('package-lock.json') }}
-
+      # npm ci иногда падает на раннерах с "Exit handler never called";
+      # кэш node_modules мог сохранять недоустановленные зависимости — не используем.
       - name: Install dependencies
-        if: steps.node-modules.outputs.cache-hit != 'true'
         env:
           NPM_CONFIG_AUDIT: false
           NPM_CONFIG_FUND: false
-        run: npm ci --no-audit --no-fund --prefer-offline --loglevel=error
+        run: npm install --no-audit --no-fund --prefer-offline --loglevel=error
 
       - name: Build
         run: npm run build
