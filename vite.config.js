@@ -1,6 +1,6 @@
 import { defineConfig } from 'vite';
 
-// GitHub Pages project site: https://<user>.github.io/<repo>/
+// Relative base so assets resolve under https://<user>.github.io/<repo>/ when served from /docs
 export default defineConfig(({ command }) => ({
-  base: command === 'build' ? '/test360/' : '/',
+  base: command === 'build' ? './' : '/',
 }));

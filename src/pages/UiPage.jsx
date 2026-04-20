@@ -9,11 +9,9 @@ import ObjectsSidebar from '../sections/ObjectsSidebar';
 import SelectionPanel from '../sections/SelectionPanel';
 
 function openUploadsTab() {
-  const raw = import.meta.env.BASE_URL || '/';
-  const base = raw.endsWith('/') ? raw.slice(0, -1) : raw;
-  const prefix = base === '' || base === '/' ? '' : base;
-  const url = `${window.location.origin}${prefix}/#/uploads`;
-  window.open(url, '_blank', 'noopener,noreferrer');
+  const u = new URL(window.location.href);
+  u.hash = '#/uploads';
+  window.open(u.toString(), '_blank', 'noopener,noreferrer');
 }
 
 export default function UiPage({ uploadJobs, setUploadJobs }) {

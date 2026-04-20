@@ -3,6 +3,8 @@ name: Deploy to GitHub Pages
 on:
   push:
     branches: [master, main]
+    paths-ignore:
+      - 'docs/**'
   workflow_dispatch:
 
 permissions:
@@ -33,8 +35,11 @@ jobs:
       - name: Build
         run: npm run build
 
-      - name: Publish dist to gh-pages branch
-        uses: peaceiris/actions-gh-pages@v4
+      - name: Publish to docs/ on default branch
+        uses: JamesIves/github-pages-deploy-action@v4
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./dist
+          branch: ${{ github.ref_name }}
+          folder: dist
+          target-folder: docs
+          clean: true
+          commit-message: 'chore: deploy GitHub Pages [skip ci]'
