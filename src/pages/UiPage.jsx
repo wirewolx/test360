@@ -8,14 +8,9 @@ import MapCanvas from '../sections/MapCanvas';
 import ObjectsSidebar from '../sections/ObjectsSidebar';
 import SelectionPanel from '../sections/SelectionPanel';
 
-function openUploadsTab() {
-  const u = new URL(window.location.href);
-  u.hash = '#/uploads';
-  window.open(u.toString(), '_blank', 'noopener,noreferrer');
-}
+const EXPORT_DURATION_MS = 3 * 60 * 1000;
 
-export default function UiPage({ uploadJobs, setUploadJobs }) {
-  const projectId = 'demo-project';
+export default function UiPage() {
   const mapRef = useRef(null);
   const [selectedMode, setSelectedMode] = useState('point');
   const [selectedPointId, setSelectedPointId] = useState(points[0].id);
@@ -25,7 +20,8 @@ export default function UiPage({ uploadJobs, setUploadJobs }) {
   const [isFullscreenOpen, setIsFullscreenOpen] = useState(false);
   const [isExportOpen, setIsExportOpen] = useState(false);
   const [isExportStartedOpen, setIsExportStartedOpen] = useState(false);
-  const [exportNoticeVariant, setExportNoticeVariant] = useState('started'); // 'started' | 'already'
+  const [isExporting, setIsExporting] = useState(false);
+  const [exportStartedAt, setExportStartedAt] = useState(null);
   const [openedFromModal, setOpenedFromModal] = useState(false);
   const [hoveredPhotoPointId, setHoveredPhotoPointId] = useState(null);
   const [mapScale, setMapScale] = useState(1);
@@ -96,6 +92,17 @@ export default function UiPage({ uploadJobs, setUploadJobs }) {
   }, [dragState]);
 
   useEffect(() => {
+    if (!isExporting || !exportStartedAt) return undefined;
+
+    const timeout = window.setTimeout(() => {
+      setIsExporting(false);
+      setExportStartedAt(null);
+    }, Math.max(0, EXPORT_DURATION_MS - (Date.now() - exportStartedAt)));
+
+    return () => window.clearTimeout(timeout);
+  }, [isExporting, exportStartedAt]);
+
+  useEffect(() => {
     function onKeyDown(e) {
       if (isFullscreenOpen) {
         if (e.key === 'Escape') onCloseFullscreen();
@@ -109,37 +116,19 @@ export default function UiPage({ uploadJobs, setUploadJobs }) {
 
     window.addEventListener('keydown', onKeyDown);
     return () => window.removeEventListener('keydown', onKeyDown);
-  }, [isFullscreenOpen, isModalOpen, currentPhotos.length]);
+  }, [isFullscreenOpen, isModalOpen, isExportOpen, isExportStartedOpen, currentPhotos.length]);
 
-  function startUploadJob({ name, projectId, kind }) {
-    const hasRunningSameProjectExport = uploadJobs.some(
-      (j) => j.kind === 'export' && j.projectId === projectId && j.status === 'running'
-    );
-    if (kind === 'export' && hasRunningSameProjectExport) return { ok: false };
+  function startExport() {
+    if (isExporting) return;
+    setIsExporting(true);
+    setExportStartedAt(Date.now());
+    setIsExportStartedOpen(true);
+  }
 
-    const id = `${Date.now()}-${Math.random().toString(16).slice(2)}`;
-    const durationMs = 5 * 60 * 1000; // 5 minutes
-    const startedAt = Date.now();
-    const job = { id, name, projectId, kind, status: 'running', progress: 0, startedAt, durationMs };
-    setUploadJobs((prev) => [...prev, job]);
-
-    const timer = window.setInterval(() => {
-      const elapsed = Date.now() - startedAt;
-      const progress = Math.min(100, (elapsed / durationMs) * 100);
-      const isDone = progress >= 100;
-
-      setUploadJobs((prev) => {
-        const current = prev.find((j) => j.id === id);
-        if (!current || current.status !== 'running') {
-          window.clearInterval(timer);
-          return prev;
-        }
-        return prev.map((j) => (j.id === id ? { ...j, progress, status: isDone ? 'done' : 'running' } : j));
-      });
-      if (isDone) window.clearInterval(timer);
-    }, 1000);
-
-    return { ok: true, id };
+  function cancelExport() {
+    setIsExporting(false);
+    setExportStartedAt(null);
+    setIsExportStartedOpen(false);
   }
 
   function onSelectPoint(pointId) {
@@ -329,6 +318,15 @@ export default function UiPage({ uploadJobs, setUploadJobs }) {
             </div>
 
             <div className="flow-header-right">
+              {isExporting ? (
+                <div className="flow-exporting-status" role="status" aria-live="polite">
+                  <span className="flow-exporting-loader" aria-hidden="true" />
+                  <span className="flow-exporting-text">Exporting project</span>
+                  <button type="button" className="flow-exporting-cancel" onClick={cancelExport}>
+                    Cancel
+                  </button>
+                </div>
+              ) : null}
               <button className="flow-header-close" type="button" aria-label="Close">
                 ×
               </button>
@@ -344,9 +342,6 @@ export default function UiPage({ uploadJobs, setUploadJobs }) {
             selectedMode={selectedMode}
             selectedPointId={selectedPointId}
             onSelectPoint={onSelectPoint}
-            uploadJobs={uploadJobs}
-            onOpenUploads={openUploadsTab}
-            uploadsCount={uploadJobs.filter((j) => j.status === 'running').length}
           />
 
           <MapCanvas
@@ -397,21 +392,12 @@ export default function UiPage({ uploadJobs, setUploadJobs }) {
         isOpen={isExportOpen}
         projectName="Demo project"
         onClose={() => setIsExportOpen(false)}
-        onExportStart={() => {
-          const res = startUploadJob({ name: 'Export Demo project', projectId, kind: 'export' });
-          setExportNoticeVariant(res.ok ? 'started' : 'already');
-          setIsExportStartedOpen(true);
-        }}
+        onExportStart={startExport}
       />
 
       <ExportStartedModal
         isOpen={isExportStartedOpen}
-        variant={exportNoticeVariant}
         onClose={() => setIsExportStartedOpen(false)}
-        onOpenUploads={() => {
-          setIsExportStartedOpen(false);
-          openUploadsTab();
-        }}
       />
 
       <FullscreenViewer

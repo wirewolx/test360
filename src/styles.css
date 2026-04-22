@@ -785,6 +785,39 @@ body {
     flex: 0 0 auto;
   }
 
+  .flow-exporting-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: rgba(255,255,255,0.92);
+    font-size: 12px;
+    white-space: nowrap;
+  }
+
+.flow-exporting-loader {
+    width: 14px;
+    height: 14px;
+    border-radius: 999px;
+    border: 2px solid rgba(255,255,255,0.25);
+    border-top-color: #ffffff;
+  animation: export-spin 0.85s linear infinite;
+  }
+
+  .flow-exporting-text {
+    font-weight: 500;
+  }
+
+  .flow-exporting-cancel {
+    border: none;
+    background: transparent;
+    color: rgba(255,255,255,0.95);
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 600;
+    text-decoration: underline;
+    padding: 0;
+  }
+
   .flow-header-center {
     flex: 1 1 auto;
     display: flex;
@@ -1990,23 +2023,23 @@ body {
 
   /* Export started modal */
   .modal-box.export-started-modal {
-    width: 520px;
-    height: 190px;
-    max-height: 190px;
+    width: 760px;
+    max-width: calc(100vw - 40px);
+    min-height: 360px;
     padding: 0;
     overflow: hidden;
-    border-radius: 18px;
+    border-radius: 24px;
   }
 
   .export-started-close {
     position: absolute;
-    top: 16px;
-    right: 16px;
-    width: 32px;
-    height: 32px;
+    top: 24px;
+    right: 24px;
+    width: 52px;
+    height: 52px;
     border: none;
     border-radius: 999px;
-    background: rgba(0,0,0,0.08);
+    background: transparent;
     cursor: pointer;
     z-index: 2;
   }
@@ -2015,10 +2048,10 @@ body {
   .export-started-close::after {
     content: "";
     position: absolute;
-    left: 9px;
-    right: 9px;
-    top: 15px;
-    height: 2px;
+    left: 13px;
+    right: 13px;
+    top: 24px;
+    height: 4px;
     background: rgba(0,0,0,0.35);
     border-radius: 999px;
   }
@@ -2027,277 +2060,36 @@ body {
   .export-started-close::after { transform: rotate(-45deg); }
 
   .export-started-body {
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 18px;
-    padding: 18px 24px;
-    text-align: left;
-  }
-
-  .export-started-title {
-    font-size: 16px;
-    font-weight: 600;
-    color: #1f1f1f;
-    margin-bottom: 6px;
-  }
-
-  .export-started-subtext {
-    font-size: 14px;
-    color: rgba(31,31,31,0.65);
-  }
-
-  .export-started-link {
-    border: none;
-    background: transparent;
-    color: #3452e8;
-    padding: 0;
-    font-size: 14px;
-    cursor: pointer;
-    text-decoration: underline;
-  }
-
-  /* Uploads modal */
-  .modal-box.uploads-modal {
-    width: 560px;
-    max-width: calc(100vw - 40px);
-    max-height: calc(100vh - 80px);
-    padding: 22px 22px 18px;
-    border-radius: 18px;
-  }
-
-  .uploads-close {
-    position: absolute;
-    top: 16px;
-    right: 16px;
-    width: 32px;
-    height: 32px;
-    border: none;
-    border-radius: 999px;
-    background: rgba(0,0,0,0.08);
-    cursor: pointer;
-  }
-
-  .uploads-close::before,
-  .uploads-close::after {
-    content: "";
-    position: absolute;
-    left: 9px;
-    right: 9px;
-    top: 15px;
-    height: 2px;
-    background: rgba(0,0,0,0.35);
-    border-radius: 999px;
-  }
-
-  .uploads-close::before { transform: rotate(45deg); }
-  .uploads-close::after { transform: rotate(-45deg); }
-
-  .uploads-title {
-    font-size: 18px;
-    font-weight: 700;
-    color: #1f1f1f;
-    margin-bottom: 14px;
-  }
-
-  .uploads-list {
+    min-height: 360px;
     display: flex;
     flex-direction: column;
-    gap: 12px;
-    max-height: calc(100vh - 220px);
-    overflow: auto;
-    padding-right: 6px;
-  }
-
-  .uploads-item {
-    border: 1px solid rgba(0,0,0,0.08);
-    border-radius: 14px;
-    padding: 12px 12px 10px;
-    background: #fff;
-  }
-
-  .uploads-item-top {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 10px;
-    margin-bottom: 10px;
-  }
-
-  .uploads-item-name {
-    font-size: 14px;
-    font-weight: 600;
-    color: #1f1f1f;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    min-width: 0;
-  }
-
-  .uploads-item-project {
-    font-size: 12px;
-    font-weight: 700;
-    color: rgba(31,31,31,0.55);
-    background: rgba(0,0,0,0.04);
-    border: 1px solid rgba(0,0,0,0.08);
-    border-radius: 999px;
-    padding: 4px 8px;
-    line-height: 1;
-    white-space: nowrap;
-    flex: 0 0 auto;
-  }
-
-  .uploads-item-status {
-    font-size: 12px;
-    font-weight: 600;
-    color: rgba(31,31,31,0.6);
-  }
-
-  .uploads-item-status.done {
-    color: #2E7D32;
-  }
-
-  .uploads-item-progress {
-    display: grid;
-    grid-template-columns: 1fr auto;
-    align-items: center;
-    gap: 10px;
-  }
-
-  .uploads-progress-bar {
-    height: 8px;
-    border-radius: 999px;
-    background: rgba(0,0,0,0.08);
-    overflow: hidden;
-  }
-
-  .uploads-progress-fill {
-    height: 100%;
-    background: #3452e8;
-    border-radius: 999px;
-    width: 0%;
-    transition: width 0.35s ease;
-  }
-
-  .uploads-progress-value {
-    font-size: 12px;
-    color: rgba(31,31,31,0.65);
-    font-variant-numeric: tabular-nums;
-  }
-
-  .uploads-empty {
-    padding: 18px;
-    border-radius: 14px;
-    background: rgba(0,0,0,0.04);
-    color: rgba(31,31,31,0.65);
-  }
-
-  /* Upload banner in left panel */
-  .upload-banner {
-    margin: 10px 12px 12px;
-    padding: 10px 12px;
-    border-radius: 14px;
-    border: 1px solid rgba(0,0,0,0.08);
-    background: #ffffff;
-  }
-
-  .upload-banner-top {
-    display: flex;
-    align-items: baseline;
-    justify-content: space-between;
-    gap: 10px;
-    margin-bottom: 4px;
-  }
-
-  .upload-banner-title {
-    font-size: 12px;
-    font-weight: 700;
-    color: #1f1f1f;
-  }
-
-  .upload-banner-link {
-    border: none;
-    background: transparent;
-    color: #3452e8;
-    font-size: 12px;
-    cursor: pointer;
-    padding: 0;
-  }
-
-  .upload-banner-sub {
-    font-size: 12px;
-    color: rgba(31,31,31,0.65);
-    margin-bottom: 8px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-
-  .upload-banner-bar {
-    height: 8px;
-    border-radius: 999px;
-    background: rgba(0,0,0,0.08);
-    overflow: hidden;
-  }
-
-  .upload-banner-fill {
-    height: 100%;
-    background: #3452e8;
-    border-radius: 999px;
-    width: 0%;
-    transition: width 0.35s ease;
-  }
-
-  .uploads-link-row {
-    width: calc(100% - 24px);
-    margin: 0 12px 10px;
-    height: 36px;
-    border-radius: 10px;
-    border: 1px solid rgba(0,0,0,0.08);
-    background: #ffffff;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 12px;
-    cursor: pointer;
-    font-size: 12px;
-    font-weight: 700;
-    color: #1f1f1f;
-  }
-
-  .uploads-right {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-  }
-
-  .uploads-spinner {
-    width: 14px;
-    height: 14px;
-    border-radius: 999px;
-    border: 2px solid rgba(52, 82, 232, 0.18);
-    border-top-color: #3452e8;
-    animation: uploads-spin 0.85s linear infinite;
-  }
-
-  @keyframes uploads-spin {
-    to { transform: rotate(360deg); }
-  }
-
-  .uploads-badge {
-    min-width: 22px;
-    height: 20px;
-    border-radius: 999px;
-    background: rgba(52, 82, 232, 0.12);
-    color: #3452e8;
-    display: inline-flex;
     align-items: center;
     justify-content: center;
-    padding: 0 6px;
-    font-size: 12px;
-    font-weight: 700;
-    font-variant-numeric: tabular-nums;
+    gap: 26px;
+    padding: 44px 40px;
+    text-align: center;
+  }
+
+  .export-started-loader {
+    width: 120px;
+    height: 120px;
+    border-radius: 999px;
+    border: 9px solid rgba(52,82,232,0.18);
+    border-top-color: #3452e8;
+    animation: export-spin 1s linear infinite;
+  }
+
+  .export-started-message {
+    margin: 0;
+    max-width: 580px;
+    font-size: 38px;
+    line-height: 1.2;
+    font-weight: 400;
+    color: #1f1f1f;
+  }
+
+  @keyframes export-spin {
+    to { transform: rotate(360deg); }
   }
 
   .modal-close {

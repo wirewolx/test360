@@ -5,9 +5,6 @@ export default function ObjectsSidebar({
   selectedMode,
   selectedPointId,
   onSelectPoint,
-  uploadJobs = [],
-  uploadsCount = 0,
-  onOpenUploads,
 }) {
   const dateLabel = '20 Apr 2026';
 
@@ -31,15 +28,6 @@ export default function ObjectsSidebar({
           <div className="objects-v2-search-icon" aria-hidden="true" />
           <input className="objects-v2-search-input" placeholder="Search" />
         </div>
-
-        {uploadsCount ? (
-          <button className="uploads-link-row" type="button" onClick={onOpenUploads}>
-            <span>Exporting project</span>
-            <span className="uploads-right">
-              <span className="uploads-spinner" aria-hidden="true" />
-            </span>
-          </button>
-        ) : null}
 
         <div className="objects-v2-section-header">
           <span className="objects-v2-section-title">Geometry</span>
